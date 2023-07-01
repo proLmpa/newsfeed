@@ -2,6 +2,7 @@ package com.newsfeed.board.user.controller;
 
 import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsImpl;
+import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
 import com.newsfeed.board.user.dto.UserResponseDto;
 import com.newsfeed.board.user.service.UserService;
@@ -64,18 +65,31 @@ public class UserController {
     }
 
     @PutMapping("/user/profile")
-    public ResponseEntity<?> updateProfile(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<?> updateProfile(@RequestBody ProfileRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        try {
+            userService.updateProfile(requestDto, userDetails.getUser());
+        } catch(IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
+        }
+        return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_PROFILE_EDIT"));
+    }
+
+    @PutMapping("/user/password")
+    public ResponseEntity<?> updateProfilePassword(@Valid @RequestBody ProfileRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // Validation 예외 처리
         ResponseEntity<ApiResponseDto> result = checkUserRequestDto(bindingResult);
         if(result != null) return result;
 
         try {
-            return userService.updateProfile(requestDto);
+            userService.updatePassword(requestDto, userDetails.getUser());
         } catch(IllegalArgumentException e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
         }
+        return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_PASSWORD_EDIT"));
     }
+
 
     public ResponseEntity<ApiResponseDto> checkUserRequestDto(BindingResult bindingResult) {
         List<FieldError> fieldErrors = bindingResult.getFieldErrors();
