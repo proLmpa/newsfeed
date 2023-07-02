@@ -86,7 +86,7 @@ public class UserService {
         UserEntity user = checkIdAndPassword(id, password);
 
         // 비밀번호 한 번 더 입력 받기
-        if(requestDto.getPassword().equals(user.getPassword())){
+        if(passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
             user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
         } else {
             throw new IllegalArgumentException("Password mismatched");
