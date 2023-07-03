@@ -26,6 +26,7 @@ public class UserService {
         this.jwtUtil = jwtUtil;
     }
 
+    @Transactional
     public void signup(UserRequestDto requestDto) {
         String id = requestDto.getId();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -41,7 +42,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-
+    @Transactional(readOnly = true)
     public void login(UserRequestDto requestDto, HttpServletResponse res) {
         String id = requestDto.getId();
         String password = requestDto.getPassword();
@@ -60,6 +61,7 @@ public class UserService {
         res.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getId()));
     }
 
+    @Transactional(readOnly = true)
     public UserResponseDto getProfile(String id) {
         UserEntity user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("No such user exists")
@@ -90,7 +92,7 @@ public class UserService {
         if(requestDto.getNewPassword1().equals(requestDto.getNewPassword2())){
             user.setPassword(passwordEncoder.encode(requestDto.getNewPassword1()));
         } else {
-            throw new IllegalArgumentException("Password mismatched");
+            throw new IllegalArgumentException("New password mismatched");
         }
     }
 
