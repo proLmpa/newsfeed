@@ -2,6 +2,7 @@ package com.newsfeed.board.user.controller;
 
 import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsImpl;
+import com.newsfeed.board.user.dto.PasswordRequestDto;
 import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
 import com.newsfeed.board.user.dto.UserResponseDto;
@@ -65,7 +66,7 @@ public class UserController {
     }
 
     @PutMapping("/user/profile")
-    public ResponseEntity<?> updateProfile(@RequestBody ProfileRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiResponseDto> updateProfile(@RequestBody ProfileRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         try {
             userService.updateProfile(requestDto, userDetails.getUser());
         } catch(IllegalArgumentException e) {
@@ -76,7 +77,7 @@ public class UserController {
     }
 
     @PutMapping("/user/password")
-    public ResponseEntity<?> updateProfilePassword(@Valid @RequestBody ProfileRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiResponseDto> updateProfilePassword(@Valid @RequestBody PasswordRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // Validation 예외 처리
         ResponseEntity<ApiResponseDto> result = checkUserRequestDto(bindingResult);
         if(result != null) return result;
