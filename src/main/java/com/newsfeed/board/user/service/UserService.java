@@ -1,6 +1,7 @@
 package com.newsfeed.board.user.service;
 
 import com.newsfeed.board.common.jwt.JwtUtil;
+import com.newsfeed.board.user.dto.PasswordRequestDto;
 import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
 import com.newsfeed.board.user.dto.UserResponseDto;
@@ -79,15 +80,15 @@ public class UserService {
     }
 
     @Transactional
-    public void updatePassword(ProfileRequestDto requestDto, UserEntity userEntity) {
+    public void updatePassword(PasswordRequestDto requestDto, UserEntity userEntity) {
         String id = userEntity.getId();
         String password = userEntity.getPassword();
 
         UserEntity user = checkIdAndPassword(id, password);
 
-        // 비밀번호 한 번 더 입력 받기
-        if(passwordEncoder.matches(requestDto.getPassword(), user.getPassword())){
-            user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
+        // 새 비밀번호 두 번 확인하기
+        if(requestDto.getNewPassword1().equals(requestDto.getNewPassword2())){
+            user.setPassword(passwordEncoder.encode(requestDto.getNewPassword1()));
         } else {
             throw new IllegalArgumentException("Password mismatched");
         }
