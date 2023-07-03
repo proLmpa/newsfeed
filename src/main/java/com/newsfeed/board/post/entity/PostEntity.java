@@ -1,10 +1,14 @@
 package com.newsfeed.board.post.entity;
 
+import com.newsfeed.board.comment.entity.CommentEntity;
 import com.newsfeed.board.common.entity.TimeStamped;
 import com.newsfeed.board.post.dto.PostRequestDto;
 import com.newsfeed.board.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,10 +30,20 @@ public class PostEntity extends TimeStamped {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
+    @Column(name = "comment_list")
+    @OneToMany(mappedBy = "post", orphanRemoval = true)
+    private List<CommentEntity> commentList;
+
+    public void addCommentList(CommentEntity comment) {
+        this.commentList.add(comment);
+        comment.setPost(this);
+    }
+
     public PostEntity(PostRequestDto requestDto, UserEntity user) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
         this.user = user;
+        this.commentList = new ArrayList<>();
     }
 
     public void update(PostRequestDto postRequestDto) {

@@ -1,9 +1,14 @@
 package com.newsfeed.board.post.dto;
 
+
+import com.newsfeed.board.comment.dto.CommentResponseDto;
+import com.newsfeed.board.comment.entity.CommentEntity;
 import com.newsfeed.board.post.entity.PostEntity;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class PostResponseDto {
@@ -12,6 +17,7 @@ public class PostResponseDto {
     private String userId;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<CommentResponseDto> commentList;
 
     public PostResponseDto(PostEntity post) {
         this.title = post.getTitle();
@@ -19,5 +25,15 @@ public class PostResponseDto {
         this.userId = post.getUser().getId();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
+        this.commentList = new ArrayList<>();
+    }
+
+    public PostResponseDto(PostEntity post, List<CommentEntity> commentList) {
+        this.title = post.getTitle();
+        this.contents = post.getContents();
+        this.userId = post.getUser().getId();
+        this.createdAt = post.getCreatedAt();
+        this.modifiedAt = post.getModifiedAt();
+        this.commentList = commentList.stream().map(CommentResponseDto::new).toList();
     }
 }
