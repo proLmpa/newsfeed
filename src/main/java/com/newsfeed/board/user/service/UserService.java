@@ -88,12 +88,17 @@ public class UserService {
 
         UserEntity user = checkIdAndPassword(id, password);
 
-        // 새 비밀번호 두 번 확인하기
-        if(requestDto.getNewPassword1().equals(requestDto.getNewPassword2())){
-            user.setPassword(passwordEncoder.encode(requestDto.getNewPassword1()));
+        if(passwordEncoder.matches(requestDto.getPassword(), password)){
+            // 새 비밀번호 두 번 확인하기
+            if(requestDto.getNewPassword1().equals(requestDto.getNewPassword2())){
+                user.setPassword(passwordEncoder.encode(requestDto.getNewPassword1()));
+            } else {
+                throw new IllegalArgumentException("New password mismatched");
+            }
         } else {
-            throw new IllegalArgumentException("New password mismatched");
+            throw new IllegalArgumentException("Password mismatched");
         }
+
     }
 
     public UserEntity checkIdAndPassword(String id, String password) {
