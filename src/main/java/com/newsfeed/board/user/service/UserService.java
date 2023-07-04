@@ -37,6 +37,8 @@ public class UserService {
             throw new IllegalArgumentException("ID already exists");
         }
 
+
+
         // 사용자 등록
         UserEntity user = new UserEntity(id, password);
         userRepository.save(user);
