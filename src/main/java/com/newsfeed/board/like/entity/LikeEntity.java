@@ -24,4 +24,10 @@ public class LikeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private PostEntity postEntity;
+
+
+    public LikeEntity(UserEntity userEntity, PostEntity postEntity) {
+        this.userEntity = userEntity;
+        this.postEntity = postEntity;
+    }
 }
