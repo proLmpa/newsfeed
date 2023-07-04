@@ -2,6 +2,7 @@ package com.newsfeed.board.user.controller;
 
 import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsImpl;
+import com.newsfeed.board.email.CertificationDto;
 import com.newsfeed.board.user.dto.PasswordRequestDto;
 import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
@@ -29,16 +30,18 @@ public class UserController {
     }
 
     @PostMapping("/user/signup")
-    public ResponseEntity<ApiResponseDto> signup(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponseDto> signup(@Valid @RequestBody UserRequestDto requestDto, CertificationDto certificationDto, BindingResult bindingResult) {
         // Validation 예외 처리
         ResponseEntity<ApiResponseDto> result = checkUserRequestDto(bindingResult);
         if(result != null) return result;
 
         try {
-            userService.signup(requestDto);
+            userService.signup(requestDto,certificationDto);
         } catch(IllegalArgumentException e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponseDto(400L, "ID_ALREADY_EXIST"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         return ResponseEntity.ok().body(new ApiResponseDto(200L, "SIGN_UP_SUCCESS"));
