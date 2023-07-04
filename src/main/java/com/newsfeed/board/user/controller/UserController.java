@@ -60,7 +60,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
         }
 
-        return ResponseEntity.ok().body(new ApiResponseDto(200L, "SIGN_UP_SUCCESS"));
+        return ResponseEntity.ok().body(new ApiResponseDto(200L, "LOGIN_SUCCESS"));
     }
 
     @GetMapping("/user/profile")

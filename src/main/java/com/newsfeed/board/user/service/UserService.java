@@ -44,7 +44,6 @@ public class UserService {
 
         //email 인증발송 및 확인
         String confirm = emailService.sendSimpleMessage(email);
-        emailService.verifyEmail(config);
         if (confirm.equals(config)){
             // 사용자 등록
             UserEntity user = new UserEntity(id, password, email);

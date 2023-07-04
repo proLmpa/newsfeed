@@ -1,11 +1,9 @@
 package com.newsfeed.board.email;
 
-import com.newsfeed.board.email.redis.RedisUtill;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -17,8 +15,6 @@ public class EmailServiceImpl implements EmailService{
     @Autowired
     JavaMailSender emailSender;
 
-    @Autowired
-    RedisUtill redisUtill;
 
     public static final String ePw = createKey();
     private MimeMessage createMessage(String to )throws  Exception{
@@ -64,20 +60,11 @@ public class EmailServiceImpl implements EmailService{
     public String sendSimpleMessage(String to )throws Exception{
         MimeMessage message = createMessage(to);
         try{
-            redisUtill.setDataExpire(ePw,to,60*3L); //인증번호의 유효시간 3분
             emailSender.send(message);
         }catch (MailException es){
             es.printStackTrace();
             throw new IllegalArgumentException();
         }
-        return ePw;
-    }
-    public String verifyEmail(String key) throws ChangeSetPersister.NotFoundException {
-        String memberEmail = redisUtill.getData(key);
-        if (memberEmail == null) {
-            throw new ChangeSetPersister.NotFoundException();
-        }
-        redisUtill.deleteData(key);
         return ePw;
     }
 
