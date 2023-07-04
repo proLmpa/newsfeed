@@ -49,6 +49,7 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(HttpMethod.POST, "/api/user/**").permitAll() // `/api/user`로 시작하는 POST 요청 모두 접근 허가
+                        .requestMatchers(HttpMethod.POST, "/api/email/**").permitAll() // `/api/email`로 시작하는 POST 요청 모두 접근 허가
                         .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll() // '/api/post'로 시작하는 GET 요청 모두 접근 허가
                         .anyRequest().authenticated() // 그 외 모든 요청 인증 처리
         );

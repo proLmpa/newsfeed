@@ -1,15 +1,24 @@
 package com.newsfeed.board.email;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
+@RequestMapping("/api")
 public class EmailController {
 
     EmailService emailService;
+
+    @Autowired
+    public EmailController(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
     @PostMapping("/email")
     @ResponseBody
-    public String emailConfirm(String email)throws Exception{
+    public String emailConfirm(@RequestParam String email)throws Exception{
         String confirm = emailService.sendSimpleMessage(email);
+        System.out.println("전달받는 이메일: " + email);
         return confirm;
     }
 }
