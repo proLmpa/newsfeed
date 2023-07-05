@@ -63,4 +63,8 @@ public class PostEntity extends TimeStamped {
     public void countLike() {
         this.likes++;
     }
+
+    public void discountLike() {
+        this.likes--;
+    }
 }

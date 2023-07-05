@@ -1,11 +1,9 @@
-package com.newsfeed.board.like.controller;
+package com.newsfeed.board.like.postLike.controller;
 // 오세창
 
 import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsImpl;
-import com.newsfeed.board.like.dto.LikeDto;
-import com.newsfeed.board.like.service.LikeService;
-import jakarta.validation.Valid;
+import com.newsfeed.board.like.postLike.service.PostLikeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +14,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class LikeController {
+public class PostLikeController {
 
-    private final LikeService likeService;
+    private final PostLikeService postLikeService;
     @PostMapping("/post/{id}/like")
     public ResponseEntity<ApiResponseDto> insert(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
-        return likeService.insert(id, userDetails);
+        return postLikeService.insert(id, userDetails);
+    }
+
+    @DeleteMapping("/post/{id}/like")
+    public ResponseEntity<ApiResponseDto> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
+        return postLikeService.delete(id, userDetails);
     }
 }
