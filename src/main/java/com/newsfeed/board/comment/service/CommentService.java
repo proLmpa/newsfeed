@@ -4,11 +4,14 @@ import com.newsfeed.board.comment.dto.CommentRequestDto;
 import com.newsfeed.board.comment.dto.CommentResponseDto;
 import com.newsfeed.board.comment.entity.CommentEntity;
 import com.newsfeed.board.comment.repository.CommentRepository;
+import com.newsfeed.board.post.dto.PostResponseDto;
 import com.newsfeed.board.post.entity.PostEntity;
 import com.newsfeed.board.post.repository.PostRepository;
 import com.newsfeed.board.user.entity.UserEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class CommentService {
@@ -40,7 +43,7 @@ public class CommentService {
         CommentEntity comment = findComment(commentId);
 
         // 해당 사용자가 작성한 댓글 여부 혹은 관리자 여부 확인
-        if(matchUser(comment, user)) {
+        if (matchUser(comment, user)) {
             comment.update(requestDto);
 
             return new CommentResponseDto(comment);
@@ -50,12 +53,12 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId, UserEntity user){
+    public void deleteComment(Long commentId, UserEntity user) {
         // 선택한 댓글이 DB이 존재하는지 확인
         CommentEntity comment = findComment(commentId);
 
         // 해당 사용자가 작성한 댓글 여부 혹은 관리자 여부 확인
-        if(matchUser(comment, user)) {
+        if (matchUser(comment, user)) {
             commentRepository.delete(comment);
 
         } else {
@@ -80,4 +83,15 @@ public class CommentService {
     public boolean matchUser(CommentEntity comment, UserEntity user) {
         return comment.getUser().getId().equals(user.getId());
     }
+
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> getComments(Long id) {
+        return commentRepository.findAllByPost_Id(id).stream().map(CommentResponseDto::new).toList();
+
+        //select * from comment where bno = bno
+
+
+    }
+
+
 }
