@@ -9,6 +9,6 @@ import java.util.Optional;
 
 
 public interface LikeRepository extends JpaRepository <LikeEntity, Long> {
-    Optional<LikeEntity> findUserAndPost(UserEntity userEntity, PostEntity postEntity);
+    Optional<LikeEntity> findByUserEntityAndPostEntity(UserEntity userEntity, PostEntity postEntity);
 
 }
