@@ -2,6 +2,8 @@ package com.newsfeed.board.user.controller;
 
 import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsImpl;
+import com.newsfeed.board.user.dto.PasswordRequestDto;
+import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
 import com.newsfeed.board.user.dto.UserResponseDto;
 import com.newsfeed.board.user.service.UserService;
@@ -74,31 +76,31 @@ public class UserController {
         return userService.getProfile(userDetails.getId());
     }
 
-//    @PutMapping("/user/profile")
-//    public ResponseEntity<ApiResponseDto> updateProfile(@RequestBody ProfileRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        try {
-//            userService.updateProfile(requestDto, userDetails.getUser());
-//        } catch(IllegalArgumentException e) {
-//            log.error(e.getMessage());
-//            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
-//        }
-//        return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_PROFILE_EDIT"));
-//    }
+    @PutMapping("/user/profile")
+    public ResponseEntity<ApiResponseDto> updateProfile(@RequestBody ProfileRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        try {
+            userService.updateProfile(requestDto, userDetails.getUser());
+        } catch(IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
+        }
+        return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_PROFILE_EDIT"));
+    }
 
-//    @PutMapping("/user/password")
-//    public ResponseEntity<ApiResponseDto> updateProfilePassword(@Valid @RequestBody PasswordRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        // Validation 예외 처리
-//        ResponseEntity<ApiResponseDto> result = checkUserRequestDto(bindingResult);
-//        if(result != null) return result;
-//
-//        try {
-//            userService.updatePassword(requestDto, userDetails.getUser());
-//        } catch(IllegalArgumentException e) {
-//            log.error(e.getMessage());
-//            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
-//        }
-//        return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_PASSWORD_EDIT"));
-//    }
+    @PutMapping("/user/password")
+    public ResponseEntity<ApiResponseDto> updateProfilePassword(@Valid @RequestBody PasswordRequestDto requestDto, BindingResult bindingResult, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        // Validation 예외 처리
+        ResponseEntity<ApiResponseDto> result = checkUserRequestDto(bindingResult);
+        if(result != null) return result;
+
+        try {
+            userService.updatePassword(requestDto, userDetails.getUser());
+        } catch(IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
+        }
+        return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_PASSWORD_EDIT"));
+    }
 
 
     public ResponseEntity<ApiResponseDto> checkUserRequestDto(BindingResult bindingResult) {
