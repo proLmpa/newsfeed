@@ -21,4 +21,8 @@ public class ConfigEntity extends TimeStamped{
     public ConfigEntity(String config) {
         this.config = config;
     }
+
+    public ConfigEntity() {
+
+    }
 }

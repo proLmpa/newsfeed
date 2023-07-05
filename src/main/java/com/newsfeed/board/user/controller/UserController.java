@@ -2,8 +2,7 @@ package com.newsfeed.board.user.controller;
 
 import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsImpl;
-import com.newsfeed.board.email.CertificationDto;
-import com.newsfeed.board.post.dto.PostRequestDto;
+import com.newsfeed.board.email.CertifiRepository;
 import com.newsfeed.board.user.dto.PasswordRequestDto;
 import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
@@ -12,7 +11,6 @@ import com.newsfeed.board.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -26,9 +24,11 @@ import java.util.List;
 @RequestMapping("/api")
 public class UserController {
     private final UserService userService;
+    private final CertifiRepository certifiRepository;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, CertifiRepository certifiRepository) {
         this.userService = userService;
+        this.certifiRepository = certifiRepository;
     }
 
     @PostMapping("/user/signup")
@@ -48,10 +48,15 @@ public class UserController {
 
         return ResponseEntity.ok().body(new ApiResponseDto(200L, "SIGN_UP_SUCCESS"));
     }
-//    @PostMapping("/user/code/{config}")
-//    public ResponseEntity<ApiResponseDto> checkedCode(@PathVariable CertificationDto config ) throws Exception {
-//      boolean checked =  userService.checkedCode(config);
-//        }
+    @PostMapping("/user/code/{config}/{id}")
+    public String checkedCode(@PathVariable String config, @PathVariable Long id) {
+        return userService.checkedCode(config, id);
+        }
+//@PostMapping("/user/code")
+//public String checkedCode(@RequestParam String config) {
+//    Long id = certifiRepository.findIdByConfig(config);
+//    return userService.checkedCode(config,id);
+//}
 
     @PostMapping("/user/login")
     public ResponseEntity<ApiResponseDto> login(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult, HttpServletResponse res) {

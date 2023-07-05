@@ -1,10 +1,7 @@
 package com.newsfeed.board.user.service;
 
 import com.newsfeed.board.common.jwt.JwtUtil;
-import com.newsfeed.board.email.CertifiRepository;
-import com.newsfeed.board.email.CertificationDto;
-import com.newsfeed.board.email.ConfigEntity;
-import com.newsfeed.board.email.EmailServiceImpl;
+import com.newsfeed.board.email.*;
 import com.newsfeed.board.user.dto.PasswordRequestDto;
 import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
@@ -12,6 +9,7 @@ import com.newsfeed.board.user.dto.UserResponseDto;
 import com.newsfeed.board.user.entity.UserEntity;
 import com.newsfeed.board.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import org.hibernate.validator.internal.util.privilegedactions.LoadClass;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +44,6 @@ public class UserService {
             throw new IllegalArgumentException("ID already exists");
         }
         //email 인증발송
-            emailService.sendSimpleMessage(email);
         // ConfigEntity 타입으로 ePw인 인증코드 저장
             ConfigEntity config = new ConfigEntity(emailService.sendSimpleMessage(email));
             //certifirepostiroy에 인증코드 저장
@@ -55,8 +52,22 @@ public class UserService {
             userRepository.save(user);
     }
     @Transactional
-    public boolean checkedCode(CertificationDto certificationDto)throws Exception{
-        return true;
+    public String checkedCode(String config,Long id){
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime sentAt= certifiRepository.getReferenceById(id).getCreatedAt();
+        LocalDateTime aftertime = sentAt.plusMinutes(1);
+        String DBconfig = certifiRepository.getReferenceById(id).getConfig();
+
+        if (!(currentTime.isAfter(aftertime))) {
+           if (DBconfig.equals(config)){
+               return "인증되었습니다.";
+           }else {
+               return "인증번호가 틀립니다.";
+           }
+
+        }else {
+        return "인증번호가 만료되었습니다.";
+        }
     }
 
     @Transactional(readOnly = true)
