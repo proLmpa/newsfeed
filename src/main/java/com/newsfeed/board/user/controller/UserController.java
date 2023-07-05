@@ -46,9 +46,9 @@ public class UserController {
 
         return ResponseEntity.ok().body(new ApiResponseDto(200L, "SIGN_UP_SUCCESS"));
     }
-    @PostMapping("/user/code/{config}/{id}")
-    public String checkedCode(@PathVariable String config, @PathVariable Long id) {
-        return userService.checkedCode(config, id);
+    @PostMapping("/user/code")
+    public String checkedCode(@RequestParam String config) {
+        return userService.checkedCode(config);
         }
 
     @PostMapping("/user/login")

@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface CertifiRepository extends JpaRepository<ConfigEntity, Long> {
 
+    ConfigEntity findByConfig(String config);
 }

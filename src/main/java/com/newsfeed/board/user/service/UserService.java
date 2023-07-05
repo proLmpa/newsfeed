@@ -52,11 +52,13 @@ public class UserService {
             userRepository.save(user);
     }
     @Transactional
-    public String checkedCode(String config,Long id){
+    public String checkedCode(String config){
         LocalDateTime currentTime = LocalDateTime.now();
-        LocalDateTime sentAt= certifiRepository.getReferenceById(id).getCreatedAt();
+        ConfigEntity configEntity = certifiRepository.findByConfig(config);
+
+        LocalDateTime sentAt= configEntity.getCreatedAt();
         LocalDateTime aftertime = sentAt.plusMinutes(1);
-        String DBconfig = certifiRepository.getReferenceById(id).getConfig();
+        String DBconfig = configEntity.getConfig();
 
         if (!(currentTime.isAfter(aftertime))) {
            if (DBconfig.equals(config)){
