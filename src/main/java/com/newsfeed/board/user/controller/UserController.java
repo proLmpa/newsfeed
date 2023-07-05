@@ -3,6 +3,7 @@ package com.newsfeed.board.user.controller;
 import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsImpl;
 import com.newsfeed.board.email.CertificationDto;
+import com.newsfeed.board.post.dto.PostRequestDto;
 import com.newsfeed.board.user.dto.PasswordRequestDto;
 import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
@@ -11,6 +12,7 @@ import com.newsfeed.board.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
@@ -30,13 +32,13 @@ public class UserController {
     }
 
     @PostMapping("/user/signup")
-    public ResponseEntity<ApiResponseDto> signup(@Valid @RequestBody UserRequestDto requestDto, CertificationDto certificationDto, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponseDto> signup(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외 처리
         ResponseEntity<ApiResponseDto> result = checkUserRequestDto(bindingResult);
         if(result != null) return result;
 
         try {
-            userService.signup(requestDto,certificationDto);
+            userService.signup(requestDto);
         } catch(IllegalArgumentException e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponseDto(400L, "ID_ALREADY_EXIST"));
@@ -46,6 +48,10 @@ public class UserController {
 
         return ResponseEntity.ok().body(new ApiResponseDto(200L, "SIGN_UP_SUCCESS"));
     }
+//    @PostMapping("/user/code/{config}")
+//    public ResponseEntity<ApiResponseDto> checkedCode(@PathVariable CertificationDto config ) throws Exception {
+//      boolean checked =  userService.checkedCode(config);
+//        }
 
     @PostMapping("/user/login")
     public ResponseEntity<ApiResponseDto> login(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult, HttpServletResponse res) {
