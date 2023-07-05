@@ -24,11 +24,9 @@ import java.util.List;
 @RequestMapping("/api")
 public class UserController {
     private final UserService userService;
-    private final CertifiRepository certifiRepository;
 
-    public UserController(UserService userService, CertifiRepository certifiRepository) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.certifiRepository = certifiRepository;
     }
 
     @PostMapping("/user/signup")
@@ -52,11 +50,6 @@ public class UserController {
     public String checkedCode(@PathVariable String config, @PathVariable Long id) {
         return userService.checkedCode(config, id);
         }
-//@PostMapping("/user/code")
-//public String checkedCode(@RequestParam String config) {
-//    Long id = certifiRepository.findIdByConfig(config);
-//    return userService.checkedCode(config,id);
-//}
 
     @PostMapping("/user/login")
     public ResponseEntity<ApiResponseDto> login(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult, HttpServletResponse res) {
