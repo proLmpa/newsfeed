@@ -1,5 +1,6 @@
 package com.newsfeed.board.like.commentLike.entity;
 
+
 import com.newsfeed.board.comment.entity.CommentEntity;
 import com.newsfeed.board.user.entity.UserEntity;
 import jakarta.persistence.*;
@@ -16,15 +17,15 @@ public class CommentLikeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "user_id")
-    private UserEntity user;
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "comment_id")
-    private CommentEntity comment;
+    @JoinColumn(name = "comment_id")
+    private CommentEntity commentEntity;
 
-    private CommentLikeEntity (UserEntity user, CommentEntity comment) {
-        this.user = user;
-        this.comment = comment;
+    public CommentLikeEntity (UserEntity user, CommentEntity comment) {
+        this.userEntity = user;
+        this.commentEntity = comment;
     }
 }
