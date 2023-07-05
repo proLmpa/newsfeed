@@ -1,4 +1,4 @@
-package com.newsfeed.board.like.entity;
+package com.newsfeed.board.like.postLike.entity;
 // 오세창
 import com.newsfeed.board.post.entity.PostEntity;
 import com.newsfeed.board.user.entity.UserEntity;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "post_like_table")
-public class LikeEntity {
+public class PostLikeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class LikeEntity {
     private PostEntity postEntity;
 
 
-    public LikeEntity(UserEntity userEntity, PostEntity postEntity) {
+    public PostLikeEntity(UserEntity userEntity, PostEntity postEntity) {
         this.userEntity = userEntity;
         this.postEntity = postEntity;
     }
