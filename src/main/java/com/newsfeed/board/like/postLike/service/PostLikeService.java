@@ -24,18 +24,18 @@ public class PostLikeService {
     @Transactional
     public ResponseEntity<ApiResponseDto> insert(Long id, UserDetailsImpl userDetails) throws Exception {
 
-        UserEntity user = userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new RuntimeException("Could not found member id : " + userDetails.getId()));
+        UserEntity user = findUserById(userDetails);
+        PostEntity post = findPostById(id);
 
-        PostEntity post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Could not found member id : " + id));
+        // 본인 게시글에는 좋아요 불가
 
         try {
             if (postLikeRepository.findByUserEntityAndPostEntity(user, post).isPresent()) {
                 // 이미 좋아요 되어있으면 에러 반환
                 throw new Exception("\"Like\" already exists.");
+            } else if (post.getUser().getId().equals(userDetails.getId())) {
+                throw new Exception("Same person cannot \"Like\"");
             } else {
-                // Post의 likes가 1증가
                 post.countLike();
             }
         } catch (Exception e) {
@@ -54,18 +54,15 @@ public class PostLikeService {
     @Transactional
     public ResponseEntity<ApiResponseDto> delete(Long id, UserDetailsImpl userDetails) throws Exception {
 
-        UserEntity user = userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new RuntimeException("Could not found member id : " + userDetails.getId()));
-
-        PostEntity post = postRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Could not found post id : " + id));
+        UserEntity user = findUserById(userDetails);
+        PostEntity post = findPostById(id);
 
         try {
             // 좋아요가 존재하는지 확인 후 삭제, 존재하지 않으면 에러 반환
             PostLikeEntity like = postLikeRepository.findByUserEntityAndPostEntity(user, post)
                     .orElseThrow(() -> new RuntimeException("\"Like\" not exists."));
-                post.discountLike();
-                postLikeRepository.delete(like);
+            post.discountLike();
+            postLikeRepository.delete(like);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -73,6 +70,16 @@ public class PostLikeService {
         }
 
         return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_DELETE_LIKE_IN_POST"));
+    }
+
+    public UserEntity findUserById(UserDetailsImpl userDetails) {
+        return userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new RuntimeException("Could not found member id : " + userDetails.getId()));
+    }
+
+    public PostEntity findPostById(Long id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Could not found post id : " + id));
     }
 }
 
