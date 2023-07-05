@@ -15,6 +15,7 @@ public class PostResponseDto {
     private String title;
     private String contents;
     private String userId;
+    private Integer like;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<CommentResponseDto> commentList;
@@ -23,6 +24,7 @@ public class PostResponseDto {
         this.title = post.getTitle();
         this.contents = post.getContents();
         this.userId = post.getUser().getId();
+        this.like = post.getLikes();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.commentList = new ArrayList<>();
@@ -32,6 +34,7 @@ public class PostResponseDto {
         this.title = post.getTitle();
         this.contents = post.getContents();
         this.userId = post.getUser().getId();
+        this.like = post.getLikes();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.commentList = commentList.stream().map(CommentResponseDto::new).toList();
