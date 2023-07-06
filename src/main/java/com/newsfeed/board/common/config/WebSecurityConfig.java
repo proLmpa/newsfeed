@@ -1,10 +1,12 @@
 package com.newsfeed.board.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.newsfeed.board.common.jwt.JwtAuthenticationFilter;
 import com.newsfeed.board.common.jwt.JwtAuthorizationFilter;
 import com.newsfeed.board.common.jwt.JwtUtil;
 import com.newsfeed.board.common.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,17 +20,25 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
+@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final AuthenticationConfiguration authenticationConfiguration;
     private final ObjectMapper objectMapper;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
+        return filter;
     }
 
     @Bean
@@ -48,13 +58,21 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
-                        .requestMatchers(HttpMethod.POST, "/api/user/**").permitAll() // `/api/user`로 시작하는 POST 요청 모두 접근 허가
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+                        .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
+                        .requestMatchers("/api/user/**").permitAll() // `/api/user`로 시작하는 모든 요청 모두 접근 허가
                         .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll() // '/api/post'로 시작하는 GET 요청 모두 접근 허가
                         .anyRequest().authenticated() // 그 외 모든 요청 인증 처리
         );
 
+        http.formLogin((formLogin) ->
+                formLogin
+                        .loginPage("/api/user/login-page").permitAll()
+        );
+
         // 필터 관리
-        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
