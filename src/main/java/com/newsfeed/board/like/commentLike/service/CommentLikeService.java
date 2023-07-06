@@ -35,13 +35,16 @@ public class CommentLikeService {
             if (commentLikeRepository.findByUserEntityAndCommentEntity(user, comment).isPresent()) {
                 // 이미 좋아요 되어있으면 에러 반환
                 throw new Exception("\"Like\" already exists.");
-            } else {
+            } else if (comment.getUser().getId().equals(userDetails.getId())) {
+                throw new Exception("Same person cannot \"Like\"");
+            }
+            else {
                 // Post의 likes가 1증가
                 comment.countLike();
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, "LIKE_ALREADY_EXISTS"));
+            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, "LIKE_ERROR"));
         }
 
         CommentLikeEntity like = new CommentLikeEntity(user, comment);
