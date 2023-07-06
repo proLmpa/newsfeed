@@ -17,7 +17,7 @@ public class EmailServiceImpl implements EmailService {
     JavaMailSender emailSender;
 
 
-    public static final String ePw = createKey();
+    public static String ePw = "";
     private MimeMessage createMessage(String to )throws  Exception{
         if (to == null) {
             throw new IllegalArgumentException("이메일 주소가 비어있습니다.");
@@ -49,23 +49,31 @@ public class EmailServiceImpl implements EmailService {
         return message;
     }
     //인증코드만들기
-    public static String createKey(){
-
-        StringBuffer key = new StringBuffer();
-        Random rnd = new Random();
-
-        for (int i = 0; i < 6; i++) { // 인증코드 6자리
-            key.append((rnd.nextInt(10)));
-        }
-        return key.toString();
-
-    }
+//    public static String createKey(){
+//
+//        StringBuffer key = new StringBuffer();
+//        Random rnd = new Random();
+//
+//        for (int i = 0; i < 6; i++) { // 인증코드 6자리
+//            key.append((rnd.nextInt(10)));
+//        }
+//        return key.toString();
+//
+//    }
 
     @Override
     public String sendSimpleMessage(String to )throws Exception{
         if (to == null) {
             return null;
         }
+
+        StringBuffer key = new StringBuffer();
+        Random rnd = new Random();
+        for (int i = 0; i < 6; i++) { // 인증코드 6자리
+            key.append((rnd.nextInt(10)));
+        }
+        ePw = key.toString();
+
         MimeMessage message = createMessage(to);
         try{
             emailSender.send(message);
