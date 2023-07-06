@@ -25,9 +25,14 @@ public class UserEntity {
     @Column(name = "email")
     private String email;
 
-    public UserEntity(String id, String password, String email){
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
+
+    public UserEntity(String id, String password, UserRoleEnum role,String email){
         this.id = id;
         this.password = password;
         this.email = email;
+        this.role = role;
     }
 }

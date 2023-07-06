@@ -18,12 +18,14 @@ public class ConfigEntity extends TimeStamped {
     @JoinColumn(nullable = false)
     private String config;
 
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
 
-    public ConfigEntity(String config) {
+    public ConfigEntity(UserEntity user, String config) {
+        this.user = user;
         this.config = config;
     }
 

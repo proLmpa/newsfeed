@@ -2,8 +2,10 @@ package com.newsfeed.board.common.security;
 
 import com.newsfeed.board.user.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {
@@ -19,9 +21,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
+        SimpleGrantedAuthority adminAuthority = new SimpleGrantedAuthority("ROLE_USER");
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(adminAuthority);
 
+        return authorities;
+    }
     public String getId() { return user.getId(); }
 
     @Override
@@ -53,4 +58,5 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

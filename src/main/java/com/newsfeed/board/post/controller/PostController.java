@@ -7,6 +7,7 @@ import com.newsfeed.board.post.dto.PostResponseDto;
 import com.newsfeed.board.post.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class PostController {
 
     // 게시글 작성하기 (요구사항.2)
     @PostMapping("/post")
+    @Secured("UserRoleEnum.USER")
     public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // UserDetails.getUser() : Authentication의 Principle
         return postService.createPost(requestDto, userDetails.getUser());

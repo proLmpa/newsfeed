@@ -19,5 +19,6 @@ public class UserRequestDto {
 
 
     private String email;
+    private String role;
 
 }
