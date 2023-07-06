@@ -22,6 +22,7 @@ public class UserDetailsImpl implements UserDetails {
         return null;
     }
 
+
     public String getId() { return user.getId(); }
 
     @Override
@@ -53,4 +54,5 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
