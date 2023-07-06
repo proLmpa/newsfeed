@@ -34,15 +34,15 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
-        String tokenValue = jwtUtil.getJwtFromHeader(req);
+        String tokenValue = jwtUtil.getTokenFromRequest(req);
 
-        if(StringUtils.hasText(tokenValue)) {
+        if (StringUtils.hasText(tokenValue)) {
+            // JWT 토큰 substring
+            tokenValue = jwtUtil.substringToken(tokenValue);
+            log.info(tokenValue);
 
-            if(!jwtUtil.validateToken(tokenValue)) {
-                ApiResponseDto responseDto = new ApiResponseDto(400L, "INVALID_TOKEN");
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                res.setContentType("application/json; charset=UTF-8");
-                res.getWriter().write(objectMapper.writeValueAsString(responseDto));
+            if (!jwtUtil.validateToken(tokenValue)) {
+                log.error("Token Error");
                 return;
             }
 
