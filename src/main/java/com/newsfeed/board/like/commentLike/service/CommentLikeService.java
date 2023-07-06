@@ -8,7 +8,6 @@ import com.newsfeed.board.common.security.UserDetailsImpl;
 import com.newsfeed.board.like.commentLike.entity.CommentLikeEntity;
 import com.newsfeed.board.like.commentLike.repository.CommentLikeRepository;
 import com.newsfeed.board.user.entity.UserEntity;
-import com.newsfeed.board.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +18,12 @@ import org.springframework.stereotype.Service;
 public class CommentLikeService {
 
     private final CommentLikeRepository commentLikeRepository;
-    private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
     @Transactional
-    public ResponseEntity<ApiResponseDto> insert(Long id, UserDetailsImpl userDetails) throws Exception {
+    public ResponseEntity<ApiResponseDto> insert(Long id, UserDetailsImpl userDetails) {
 
-        // 유저, 댓글 존재하는지 확인
-        UserEntity user = findUserById(userDetails);
+        UserEntity user = userDetails.getUser();
         CommentEntity comment = findCommentById(id);
 
         try {
@@ -34,13 +31,11 @@ public class CommentLikeService {
                 throw new Exception("\"Like\" already exists.");
             } else if (comment.getUser().getId().equals(userDetails.getId())) { // 댓글 작성자의 id 와 현재 인가된 유저의 id 를 비교하요 같으면 에러 반환
                 throw new Exception("Same person cannot \"Like\"");
-            }
-            else {
+            } else {
                 comment.countLike(); // comment의 likes가 1 증가
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, "LIKE_ERROR"));
+            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
         }
 
         CommentLikeEntity like = new CommentLikeEntity(user, comment); // 어떤 유저와 댓글에 좋아요 달았는지 관계 설정
@@ -52,9 +47,9 @@ public class CommentLikeService {
     }
 
     @Transactional
-    public ResponseEntity<ApiResponseDto> delete(Long id, UserDetailsImpl userDetails) throws Exception {
+    public ResponseEntity<ApiResponseDto> delete(Long id, UserDetailsImpl userDetails) {
 
-        UserEntity user = findUserById(userDetails);
+        UserEntity user = userDetails.getUser();
         CommentEntity comment = findCommentById(id);
 
         try {
@@ -65,16 +60,10 @@ public class CommentLikeService {
             commentLikeRepository.delete(like);
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, "LIKE_NOT_EXISTS"));
+            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
         }
 
         return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_DELETE_LIKE_IN_COMMENT"));
-    }
-
-    public UserEntity findUserById(UserDetailsImpl userDetails) {
-        return userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new RuntimeException("Could not found member id : " + userDetails.getId()));
     }
 
     public CommentEntity findCommentById(Long id) {
