@@ -1,7 +1,5 @@
 package com.newsfeed.board.common.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -24,12 +22,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
-    private ObjectMapper objectMapper;
 
-    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, ObjectMapper objectMapper) {
+    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
-        this.objectMapper = objectMapper;
     }
 
     @Override
