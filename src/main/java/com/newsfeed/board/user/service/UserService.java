@@ -48,9 +48,9 @@ public class UserService {
         userRepository.save(user);
         //email 인증발송
         // ConfigEntity 타입으로 ePw인 인증코드 저장
-            ConfigEntity config = new ConfigEntity(user,emailService.sendSimpleMessage(email));
-            //certifirepostiroy에 인증코드 저장
-            certifiRepository.save(config);
+        ConfigEntity config = new ConfigEntity(user,emailService.sendSimpleMessage(email));
+        //certifirepostiroy에 인증코드 저장
+        certifiRepository.save(config);
 
     }
     @Transactional
@@ -58,7 +58,7 @@ public class UserService {
         LocalDateTime currentTime = LocalDateTime.now();//현재시간저장
          Optional <ConfigEntity> configEntity = certifiRepository.findByConfig(config);//입력받아온 인증코드로부터 저장된 인증코드 불러오기
         LocalDateTime sentAt= configEntity.orElseThrow().getCreatedAt();
-        LocalDateTime aftertime = sentAt.plusMinutes(1);
+        LocalDateTime aftertime = sentAt.plusMinutes(3);
         String DBconfig = configEntity.orElseThrow().getConfig();
 
         if (!(currentTime.isAfter(aftertime))) {
@@ -69,7 +69,7 @@ public class UserService {
            }
 
         }else {
-        return "인증번호가 만료되었습니다.";
+            return "인증번호가 만료되었습니다.";
         }
     }
 

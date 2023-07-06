@@ -47,7 +47,7 @@ public class UserController {
     @PostMapping("/user/code")
     public String checkedCode(@RequestParam String config) {
         return userService.checkedCode(config);
-        }
+    }
 
     @PostMapping("/user/login")
     public ResponseEntity<ApiResponseDto> login(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult, HttpServletResponse res) {
