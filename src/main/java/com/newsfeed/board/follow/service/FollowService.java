@@ -1,6 +1,5 @@
 package com.newsfeed.board.follow.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsImpl;
 import com.newsfeed.board.follow.entity.FollowEntity;
@@ -10,11 +9,9 @@ import com.newsfeed.board.post.entity.PostEntity;
 import com.newsfeed.board.post.repository.PostRepository;
 import com.newsfeed.board.user.entity.UserEntity;
 import com.newsfeed.board.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,15 +35,10 @@ public class FollowService {
 
         UserEntity followingUser = findFollowingUser(followingUserId); // 팔로우를 할 대상의 ID
         UserEntity followerUser = userDetails.getUser(); // 팔로우를 하는 사람의 ID (본인 ID) Long id
-        Optional<FollowEntity> followEntityOptional = followRepository.findByFollowerUserAndFollowingUser(followerUser, followingUser);
 
         try {
-            if (followEntityOptional.isPresent()) { // followEntityOptional 에 값이 있는지 확인, true -> 팔로우 관계 / false -> 팔로우 관계 x
-                log.info("이미 팔로우가 되어있습니다.");
-                throw new Exception();
-            } else if (followingUser.getId().equals(userDetails.getId())) {
-                log.info("본인은 팔로우 할 수 없습니다.");
-                throw new Exception();
+            if (followingUser.getId().equals(userDetails.getId())) {
+                throw new Exception("본인은 팔로우 할 수 없습니다.");
             } else {
                 FollowEntity followEntity = new FollowEntity(followingUser, followerUser);
                 followRepository.save(followEntity);
@@ -55,7 +47,7 @@ public class FollowService {
             }
         } catch (Exception e) {
             log.info(e.getMessage());
-            return ResponseEntity.badRequest().body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "팔로우 실패"));
+            return ResponseEntity.badRequest().body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "본인은 팔로우 할 수 없습니다."));
         }
     }
 
