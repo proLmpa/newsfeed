@@ -1,10 +1,8 @@
-package com.newsfeed.board.email;
+package com.newsfeed.board.email.repository;
 
 
-import com.newsfeed.board.user.entity.UserEntity;
+import com.newsfeed.board.email.entity.ConfigEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
 
 public interface CertifiRepository extends JpaRepository<ConfigEntity, Long> {
 

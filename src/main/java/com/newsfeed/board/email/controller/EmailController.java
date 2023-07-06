@@ -1,5 +1,6 @@
-package com.newsfeed.board.email;
+package com.newsfeed.board.email.controller;
 
+import com.newsfeed.board.email.repository.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,3 +23,4 @@ public class EmailController {
         return confirm;
     }
 }
+// 권한부여 user와 certification의 연관관계 생각해서 작성할것

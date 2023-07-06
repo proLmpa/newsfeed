@@ -1,4 +1,4 @@
-package com.newsfeed.board.email;
+package com.newsfeed.board.email.entity;
 
 import java.util.Properties;
 

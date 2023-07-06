@@ -1,7 +1,9 @@
 package com.newsfeed.board.user.service;
 
 import com.newsfeed.board.common.jwt.JwtUtil;
-import com.newsfeed.board.email.*;
+import com.newsfeed.board.email.entity.ConfigEntity;
+import com.newsfeed.board.email.repository.CertifiRepository;
+import com.newsfeed.board.email.service.EmailServiceImpl;
 import com.newsfeed.board.user.dto.PasswordRequestDto;
 import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
@@ -9,7 +11,6 @@ import com.newsfeed.board.user.dto.UserResponseDto;
 import com.newsfeed.board.user.entity.UserEntity;
 import com.newsfeed.board.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
-import org.hibernate.validator.internal.util.privilegedactions.LoadClass;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

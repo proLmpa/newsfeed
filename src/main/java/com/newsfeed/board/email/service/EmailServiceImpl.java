@@ -1,5 +1,6 @@
-package com.newsfeed.board.email;
+package com.newsfeed.board.email.service;
 
+import com.newsfeed.board.email.repository.EmailService;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -11,13 +12,16 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 
 @Service
-public class EmailServiceImpl implements EmailService{
+public class EmailServiceImpl implements EmailService {
     @Autowired
     JavaMailSender emailSender;
 
 
     public static final String ePw = createKey();
     private MimeMessage createMessage(String to )throws  Exception{
+        if (to == null) {
+            throw new IllegalArgumentException("이메일 주소가 비어있습니다.");
+        }
         System.out.println("보내는 대상:" + to);
         System.out.println("인증번호 :" +ePw);
         MimeMessage message = emailSender.createMimeMessage();
@@ -46,6 +50,7 @@ public class EmailServiceImpl implements EmailService{
     }
     //인증코드만들기
     public static String createKey(){
+
         StringBuffer key = new StringBuffer();
         Random rnd = new Random();
 
@@ -58,12 +63,15 @@ public class EmailServiceImpl implements EmailService{
 
     @Override
     public String sendSimpleMessage(String to )throws Exception{
+        if (to == null) {
+            return null;
+        }
         MimeMessage message = createMessage(to);
         try{
             emailSender.send(message);
         }catch (MailException es){
             es.printStackTrace();
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이메일 발송중오류가 나타났습니다. 이메일을 다시 확인해주세요 ");
         }
         return ePw;
     }
