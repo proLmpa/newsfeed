@@ -7,11 +7,11 @@ import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
 import com.newsfeed.board.user.dto.UserResponseDto;
 import com.newsfeed.board.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/api")
 public class UserController {
     private final UserService userService;
@@ -27,31 +27,21 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-  
-    @GetMapping("/user/login-page")
-    public String loginPage() {
-        return "login";
-    }
-  
-    @GetMapping("/user/signup-page")
-    public String signupPage() {
-        return "signup";
-    }
 
     @PostMapping("/user/signup")
-    public String signup(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponseDto> signup(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외 처리
         ResponseEntity<ApiResponseDto> result = checkUserRequestDto(bindingResult);
-        if(result != null) return "redirect:/api/user/signup-page";
+        if(result != null) return result;
 
         try {
             userService.signup(requestDto);
         } catch(Exception e) {
             log.error(e.getMessage());
-            return "redirect:/api/user/signup-page";
+            return ResponseEntity.badRequest().body(new ApiResponseDto(400, e.getMessage()));
         }
 
-        return "redirect:/api/user/login-page";
+        return ResponseEntity.ok().body(new ApiResponseDto(200, "SUCCESS_SIGN_UP"));
     }
   
     @PostMapping("/user/code")
@@ -59,24 +49,23 @@ public class UserController {
         return userService.checkedCode(config);
         }
 
-//    @PostMapping("/user/login")
-//    public String login(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult, HttpServletResponse res) {
-//        // Validation 예외 처리
-//        ResponseEntity<ApiResponseDto> result = checkUserRequestDto(bindingResult);
-//        if(result != null) return "redirect:/api/user/login-page";
-//
-//        try {
-//            userService.login(requestDto, res);
-//        } catch(IllegalArgumentException e) {
-//            log.error(e.getMessage());
-//            return "redirect:/api/user/login-page";
-//        }
-//
-//        return "index";
-//    }
+    @PostMapping("/user/login")
+    public ResponseEntity<ApiResponseDto> login(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult, HttpServletResponse res) {
+        // Validation 예외 처리
+        ResponseEntity<ApiResponseDto> result = checkUserRequestDto(bindingResult);
+        if(result != null) return result;
+
+        try {
+            userService.login(requestDto, res);
+        } catch(IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiResponseDto(400, e.getMessage()));
+        }
+
+        return ResponseEntity.ok().body(new ApiResponseDto(200, "SUCCESS_SIGN_UP"));
+    }
 
     @GetMapping("/user/profile")
-    @ResponseBody
     public UserResponseDto getProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.getProfile(userDetails.getId());
     }

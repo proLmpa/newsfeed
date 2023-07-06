@@ -73,24 +73,24 @@ public class UserService {
         }
     }
 
-//    @Transactional(readOnly = true)
-//    public void login(UserRequestDto requestDto, HttpServletResponse res) {
-//        String id = requestDto.getId();
-//        String password = requestDto.getPassword();
-//
-//        // 사용자 확인
-//        UserEntity user = userRepository.findById(id).orElseThrow(
-//                () -> new IllegalArgumentException("No such user exists")
-//        );
-//
-//        // 비밀번호 확인
-//        if (!passwordEncoder.matches(password, user.getPassword())) {
-//            throw new IllegalArgumentException("Password mismatched");
-//        }
-//
-//        String token = jwtUtil.createToken(user.getId());
-//        jwtUtil.addJwtToCookie(token, res);
-//    }
+    @Transactional(readOnly = true)
+    public void login(UserRequestDto requestDto, HttpServletResponse res) {
+        String id = requestDto.getId();
+        String password = requestDto.getPassword();
+
+        // 사용자 확인
+        UserEntity user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("No such user exists")
+        );
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("Password mismatched");
+        }
+
+        String token = jwtUtil.createToken(user.getId());
+        jwtUtil.addJwtToCookie(token, res);
+    }
 
     @Transactional(readOnly = true)
     public UserResponseDto getProfile(String id) {
