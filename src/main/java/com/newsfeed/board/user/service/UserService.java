@@ -1,6 +1,9 @@
 package com.newsfeed.board.user.service;
 
 import com.newsfeed.board.common.jwt.JwtUtil;
+import com.newsfeed.board.email.entity.ConfigEntity;
+import com.newsfeed.board.email.repository.CertifiRepository;
+import com.newsfeed.board.email.service.EmailServiceImpl;
 import com.newsfeed.board.user.dto.PasswordRequestDto;
 import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
@@ -11,34 +14,62 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CertifiRepository certifiRepository;
     private final JwtUtil jwtUtil;
+    private final EmailServiceImpl emailService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, CertifiRepository certifiRepository, JwtUtil jwtUtil, EmailServiceImpl emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.certifiRepository = certifiRepository;
         this.jwtUtil = jwtUtil;
+        this.emailService = emailService;
     }
 
     @Transactional
-    public void signup(UserRequestDto requestDto) {
+    public void signup(UserRequestDto requestDto) throws Exception {
         String id = requestDto.getId();
         String password = passwordEncoder.encode(requestDto.getPassword());
-
+        String email = requestDto.getEmail();
         // 회원 중복 확인
         Optional<UserEntity> checkUsername = userRepository.findById(id);
         if(checkUsername.isPresent()){
             throw new IllegalArgumentException("ID already exists");
         }
-
-        // 사용자 등록
-        UserEntity user = new UserEntity(id, password);
+        UserEntity user = new UserEntity(id, password, email);
         userRepository.save(user);
+        //email 인증발송
+        // ConfigEntity 타입으로 ePw인 인증코드 저장
+            ConfigEntity config = new ConfigEntity(user,emailService.sendSimpleMessage(email));
+            //certifirepostiroy에 인증코드 저장
+            certifiRepository.save(config);
+
+    }
+    @Transactional
+    public String checkedCode(String config){
+        LocalDateTime currentTime = LocalDateTime.now();//현재시간저장
+         Optional <ConfigEntity> configEntity = certifiRepository.findByConfig(config);//입력받아온 인증코드로부터 저장된 인증코드 불러오기
+        LocalDateTime sentAt= configEntity.orElseThrow().getCreatedAt();
+        LocalDateTime aftertime = sentAt.plusMinutes(1);
+        String DBconfig = configEntity.orElseThrow().getConfig();
+
+        if (!(currentTime.isAfter(aftertime))) {
+           if (DBconfig.equals(config)){
+               return "인증되었습니다.";
+           }else {
+               return "인증번호가 틀립니다.";
+           }
+
+        }else {
+        return "인증번호가 만료되었습니다.";
+        }
     }
 
 //    @Transactional(readOnly = true)

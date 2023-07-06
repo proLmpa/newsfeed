@@ -27,12 +27,12 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
+  
     @GetMapping("/user/login-page")
     public String loginPage() {
         return "login";
     }
-
+  
     @GetMapping("/user/signup-page")
     public String signupPage() {
         return "signup";
@@ -53,6 +53,11 @@ public class UserController {
 
         return "redirect:/api/user/login-page";
     }
+  
+    @PostMapping("/user/code")
+    public String checkedCode(@RequestParam String config) {
+        return userService.checkedCode(config);
+        }
 
 //    @PostMapping("/user/login")
 //    public String login(@Valid @RequestBody UserRequestDto requestDto, BindingResult bindingResult, HttpServletResponse res) {

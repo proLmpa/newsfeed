@@ -35,8 +35,14 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	testImplementation 'org.springframework.security:spring-security-test'
 
+	//email
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 	// Validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//resdis 추가
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
