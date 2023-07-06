@@ -30,23 +30,21 @@ public class PostLikeService {
         // 본인 게시글에는 좋아요 불가
 
         try {
-            if (postLikeRepository.findByUserEntityAndPostEntity(user, post).isPresent()) {
-                // 이미 좋아요 되어있으면 에러 반환
+            if (postLikeRepository.findByUserEntityAndPostEntity(user, post).isPresent()) { // 이미 좋아요 되어있으면 에러 반환
                 throw new Exception("\"Like\" already exists.");
-            } else if (post.getUser().getId().equals(userDetails.getId())) {
+            } else if (post.getUser().getId().equals(userDetails.getId())) { // 댓글 작성자의 id 와 현재 인가된 유저의 id 를 비교하요 같으면 에러 반환
                 throw new Exception("Same person cannot \"Like\"");
             } else {
-                post.countLike();
+                post.countLike(); // post의 likes가 1 증
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, "LIKE_ALREADY_EXISTS"));
+            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, "LIKE_ERROR"));
         }
 
-        PostLikeEntity like = new PostLikeEntity(user, post);
+        PostLikeEntity like = new PostLikeEntity(user, post); // 어떤 유저와 게시글에 좋아요 달았는지 관계 설정
 
-        postLikeRepository.save(like);
-
+        postLikeRepository.save(like); // DB 저장
         return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_REGISTER_LIKE_IN_POST"));
 
     }
