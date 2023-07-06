@@ -25,7 +25,6 @@ public class PostController {
 
     // 게시글 작성하기 (요구사항.2)
     @PostMapping("/post")
-    @Secured("UserRoleEnum.USER")
     public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // UserDetails.getUser() : Authentication의 Principle
         return postService.createPost(requestDto, userDetails.getUser());

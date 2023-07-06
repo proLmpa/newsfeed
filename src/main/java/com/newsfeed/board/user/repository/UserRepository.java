@@ -11,7 +11,5 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, String> {
     Optional<UserEntity> findByUsername(String username);
-    @Modifying
-    @Query("update UserEntity u set u.role = 'user' where u.id = :userId")
-    void updateUserRoleToUser(@Param("userId") String userId);
+
 }

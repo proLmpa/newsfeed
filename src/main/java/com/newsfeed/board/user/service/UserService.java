@@ -9,7 +9,6 @@ import com.newsfeed.board.user.dto.ProfileRequestDto;
 import com.newsfeed.board.user.dto.UserRequestDto;
 import com.newsfeed.board.user.dto.UserResponseDto;
 import com.newsfeed.board.user.entity.UserEntity;
-import com.newsfeed.board.user.entity.UserRoleEnum;
 import com.newsfeed.board.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,13 +39,12 @@ public class UserService {
         String id = requestDto.getId();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String email = requestDto.getEmail();
-        UserRoleEnum role =  UserRoleEnum.NONUSER;
         // 회원 중복 확인
         Optional<UserEntity> checkUsername = userRepository.findById(id);
         if(checkUsername.isPresent()){
             throw new IllegalArgumentException("ID already exists");
         }
-        UserEntity user = new UserEntity(id, password, role, email);
+        UserEntity user = new UserEntity(id, password, email);
         userRepository.save(user);
         //email 인증발송
         // ConfigEntity 타입으로 ePw인 인증코드 저장
@@ -58,18 +56,13 @@ public class UserService {
     @Transactional
     public String checkedCode(String config){
         LocalDateTime currentTime = LocalDateTime.now();//현재시간저장
-      Optional <ConfigEntity> configEntity = certifiRepository.findByConfig(config);//입력받아온 인증코드로부터 저장된 인증코드 불러오기
-
-        String con = configEntity.get().getUser().getId();//con 은 certifirepository에 저장된 config를 통해서 userid를 골라와서 저장한다.
-
-        System.out.println(con);
+         Optional <ConfigEntity> configEntity = certifiRepository.findByConfig(config);//입력받아온 인증코드로부터 저장된 인증코드 불러오기
         LocalDateTime sentAt= configEntity.orElseThrow().getCreatedAt();
         LocalDateTime aftertime = sentAt.plusMinutes(1);
         String DBconfig = configEntity.orElseThrow().getConfig();
 
         if (!(currentTime.isAfter(aftertime))) {
            if (DBconfig.equals(config)){
-               userRepository.updateUserRoleToUser(con);//con과 일치하는 user정보의 role을 nonuser에서 user로 변경한다.
                return "인증되었습니다.";
            }else {
                return "인증번호가 틀립니다.";
