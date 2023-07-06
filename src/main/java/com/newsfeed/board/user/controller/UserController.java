@@ -46,7 +46,7 @@ public class UserController {
 
         try {
             userService.signup(requestDto);
-        } catch(IllegalArgumentException e) {
+        } catch(Exception e) {
             log.error(e.getMessage());
             return "redirect:/api/user/signup-page";
         }
