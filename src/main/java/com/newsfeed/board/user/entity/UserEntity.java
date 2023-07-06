@@ -10,7 +10,7 @@ import lombok.*;
 @Table(name = "user")
 public class UserEntity {
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private String id;
 
     @Column(name = "password", nullable = false)

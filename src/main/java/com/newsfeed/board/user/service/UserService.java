@@ -10,7 +10,6 @@ import com.newsfeed.board.user.dto.UserRequestDto;
 import com.newsfeed.board.user.dto.UserResponseDto;
 import com.newsfeed.board.user.entity.UserEntity;
 import com.newsfeed.board.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,24 +72,24 @@ public class UserService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public void login(UserRequestDto requestDto, HttpServletResponse res) {
-        String id = requestDto.getId();
-        String password = requestDto.getPassword();
-
-        // 사용자 확인
-        UserEntity user = userRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("No such user exists")
-        );
-
-        // 비밀번호 확인
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Password mismatched");
-        }
-
-        // JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
-        res.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getId()));
-    }
+//    @Transactional(readOnly = true)
+//    public void login(UserRequestDto requestDto, HttpServletResponse res) {
+//        String id = requestDto.getId();
+//        String password = requestDto.getPassword();
+//
+//        // 사용자 확인
+//        UserEntity user = userRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("No such user exists")
+//        );
+//
+//        // 비밀번호 확인
+//        if (!passwordEncoder.matches(password, user.getPassword())) {
+//            throw new IllegalArgumentException("Password mismatched");
+//        }
+//
+//        // JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
+//        res.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getId()));
+//    }
 
     @Transactional(readOnly = true)
     public UserResponseDto getProfile(String id) {
