@@ -206,9 +206,9 @@
                 <th class="regdate">수정일</th>
             </tr>
             <tr th:each="p : ${postList}">
-                <td th:text="${p.getPost_id()}">번호</td>
-                <td><a href="../../../../../newsfeed/src/main/resources/templates/board.html" th:href="'/api/post/'+${p.getPost_id()}" th:text="${p.getTitle()}">제목</a></td>
-                <td th:text="${p.getUser_id()}">아이디</td>
+                <td th:text="${p.getId()}">번호</td>
+                <td><a href="../../../../../newsfeed/src/main/resources/templates/board.html" th:href="'/api/post/'+${p.getId()}" th:text="${p.getTitle()}">제목</a></td>
+                <td th:text="${p.getUserId()}">아이디</td>
                 <td th:text="${p.getCreatedAt()}">등록일</td>
                 <td th:text="${p.getModifiedAt()}">수정일</td>
             </tr>

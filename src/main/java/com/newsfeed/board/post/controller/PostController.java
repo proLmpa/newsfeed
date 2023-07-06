@@ -55,12 +55,12 @@ public class PostController {
         model.addAttribute("post",responseDto);
         model.addAttribute("user",userDetails.getUser());
 
-        return "writePost";
+        return "redirect:/api/post/list";
     }
 
 
 
-    // 게시글 작성하기 (요구사항.2)
+//     게시글 작성하기 (요구사항.2)
 //    @PostMapping("/post")
 //    public PostResponseDto createPost(@RequestBody PostRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 //        // UserDetails.getUser() : Authentication의 Principle
@@ -95,17 +95,36 @@ public class PostController {
         }
     }
 
-    // 선택한 게시글 삭제하기 (요구사항.5)
     @DeleteMapping("/post/{id}")
-    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public String deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         try {
             postService.deletePost(id, userDetails.getUser());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto(400L, e.getMessage()));
+            return "redirect:/api/post/list";
+        } catch (Exception e) {
+            return "writePost";
         }
 
-        return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_DELETE_POST"));
     }
+
+
+
+    // 선택한 게시글 삭제하기 (요구사항.5)
+//    @DeleteMapping("/post/{id}")
+//    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        try {
+//            postService.deletePost(id, userDetails.getUser());
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().body(new ApiResponseDto(400L, e.getMessage()));
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto(400L, e.getMessage()));
+//        }
+//
+//        return ResponseEntity.ok().body(new ApiResponseDto(200L, "SUCCESS_DELETE_POST"));
+//    }
+
+
+
+
+
+
 }

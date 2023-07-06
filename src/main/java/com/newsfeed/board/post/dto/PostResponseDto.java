@@ -12,6 +12,7 @@ import java.util.List;
 
 @Getter
 public class PostResponseDto {
+    private Long id;
     private String title;
     private String contents;
     private String userId;
@@ -20,6 +21,7 @@ public class PostResponseDto {
     private List<CommentResponseDto> commentList;
 
     public PostResponseDto(PostEntity post) {
+        this.id = post.getId();
         this.title = post.getTitle();
         this.contents = post.getContents();
         this.userId = post.getUser().getId();
@@ -29,6 +31,7 @@ public class PostResponseDto {
     }
 
     public PostResponseDto(PostEntity post, List<CommentEntity> commentList) {
+        this.id = post.getId();
         this.title = post.getTitle();
         this.contents = post.getContents();
         this.userId = post.getUser().getId();

@@ -67,10 +67,10 @@
 <div class="container">
   <h2 th:class="writing-header">게시판 읽기</h2>
   <form id="form" class="frm" action="" method="post">
-    <input type="hidden" name="post_id" th:value="${postList.getPost_id()}">
-    <input name="user_id" type="hidden" th:value="${postList.getUser_id()}" readonly='readonly'>
+    <input type="hidden" name="post_id" th:value="${postList.getId()}">
+    <input name="user_id" type="hidden" th:value="${postList.getUserId()}" readonly='readonly'>
     <input name="title" type="text" th:value="${postList.getTitle()}" readonly='readonly'><br>
-    <textarea name="content" rows="20" th:text="${postList.getContent()}" readonly='readonly' >content</textarea><br>
+    <textarea name="content" rows="20" th:text="${postList.getContents()}" readonly='readonly' >content</textarea><br>
 
     <button type="button" id="modifyBtn" class="btn btn-modify"><i class="fa fa-edit"></i> 수정</button>
     <button type="button" id="removeBtn" class="btn btn-remove"><i class="fa fa-trash"></i> 삭제</button>
@@ -80,6 +80,38 @@
     $("#listBtn").on("click", function () {
       location.href = "[[@{/api/post/list}]]";
     });
+
+    // $("#removeBtn").on("click", function(){
+    //   if(!confirm("정말로 삭제하시겠습니까?")) return;
+    //
+    //   let form = $("#form");
+    //   form.attr("action", "[[@{/api/post/${postList.getId()}}]]");
+    //   form.attr("method", "delete");
+    //   form.submit();
+    // });
+
+    $("#removeBtn").on("click", function(){
+      let postId = $("input[name=post_id]").val()
+
+      $.ajax({
+        type:'DELETE',       // 요청 메서드
+        url: '/api/post/'+postId
+
+      })
+            .done(function (res, status, xhr) {
+      window.location.href = host + "/api/post/writePost" })
+
+
+
+
+    });
+
+
+
+
+
+
+
   </script>
 
   comment : <input type="text" name="comment"><br>

@@ -7,6 +7,7 @@ import com.newsfeed.board.user.dto.UserRequestDto;
 import com.newsfeed.board.user.dto.UserResponseDto;
 import com.newsfeed.board.user.entity.UserEntity;
 import com.newsfeed.board.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,8 +57,8 @@ public class UserService {
 //            throw new IllegalArgumentException("Password mismatched");
 //        }
 //
-//        // JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
-//        res.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getId()));
+//        String token = jwtUtil.createToken(user.getId());
+//        jwtUtil.addJwtToCookie(token, res);
 //    }
 
     @Transactional(readOnly = true)
