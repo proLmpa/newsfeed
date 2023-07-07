@@ -1,5 +1,7 @@
 package com.newsfeed.board.follow.service;
 
+import com.newsfeed.board.comment.entity.CommentEntity;
+import com.newsfeed.board.comment.repository.CommentRepository;
 import com.newsfeed.board.common.dto.ApiResponseDto;
 import com.newsfeed.board.common.security.UserDetailsImpl;
 import com.newsfeed.board.follow.entity.FollowEntity;
@@ -28,6 +30,7 @@ public class FollowService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     // 팔로우 메서드 // @UniqueConstraints 애너테이션 알아보기
     @Transactional
@@ -84,14 +87,19 @@ public class FollowService {
             throw new Exception("USER_NOT_FOLLOWING");
         }
 
-        List<PostEntity> postList = postRepository.findByUser(followingUser);
-        return postList.stream().map(PostResponseDto::new).toList();
+        return postRepository.findByUser(followingUser).stream().map((PostEntity post) ->
+                new PostResponseDto(post, findCommentList(post.getId()))
+        ).toList();
     }
 
 
     public UserEntity findFollowingUser(String id) throws Exception {
         return userRepository.findById(id)
                 .orElseThrow(() -> new Exception("No Such User Exists"));
+    }
+
+    public List<CommentEntity> findCommentList(Long postId){
+        return commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId);
     }
 
     // 하나로 합쳐보기
