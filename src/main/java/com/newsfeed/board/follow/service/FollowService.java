@@ -38,16 +38,14 @@ public class FollowService {
 
         try {
             if (followingUser.getId().equals(userDetails.getId())) {
-                throw new Exception("본인은 팔로우 할 수 없습니다.");
+                throw new Exception("CANNOT_FOLLOW_YOURSELF");
             } else {
                 FollowEntity followEntity = new FollowEntity(followingUser, followerUser);
                 followRepository.save(followEntity);
-                log.info("팔로우 성공");
-                return ResponseEntity.ok().body(new ApiResponseDto(HttpStatus.OK.value(), "팔로우 성공."));
+                return ResponseEntity.ok().body(new ApiResponseDto(HttpStatus.OK.value(), "SUCCESS_FOLLOW_USER"));
             }
         } catch (Exception e) {
-            log.info(e.getMessage());
-            return ResponseEntity.badRequest().body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "본인은 팔로우 할 수 없습니다."));
+            return ResponseEntity.badRequest().body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
         }
     }
 
@@ -64,16 +62,14 @@ public class FollowService {
             if (followEntityOptional.isPresent()) { // followEntityOptional 에 값이 있는지 확인, true -> 팔로우 관계 / false -> 팔로우 관계 x
                 FollowEntity followEntity = followEntityOptional.get();
                 followRepository.delete(followEntity);
-                log.info("언팔로우를 하였습니다.");
             } else {
-                throw new Exception("팔로우 관계가 아닙니다.");
+                throw new Exception("USER_NOT_FOLLOWING");
             }
         } catch (Exception e) {
-            log.info(e.getMessage());
-            return ResponseEntity.badRequest().body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), "언팔로우 실패"));
+            return ResponseEntity.badRequest().body(new ApiResponseDto(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
         }
 
-        return ResponseEntity.ok().body(new ApiResponseDto(HttpStatus.OK.value(), "언팔로우 성공"));
+        return ResponseEntity.ok().body(new ApiResponseDto(HttpStatus.OK.value(), "SUCCESS_UNFOLLOW_USER"));
 
     }
 
@@ -85,7 +81,7 @@ public class FollowService {
         Optional<FollowEntity> followEntityOptional = followRepository.findByFollowerUserAndFollowingUser(followerUser, followingUser);
 
         if (followEntityOptional.isEmpty()) {
-            throw new Exception("팔로우 관계가 아닙니다.");
+            throw new Exception("USER_NOT_FOLLOWING");
         }
 
         List<PostEntity> postList = postRepository.findByUser(followingUser);
@@ -95,7 +91,7 @@ public class FollowService {
 
     public UserEntity findFollowingUser(String id) throws Exception {
         return userRepository.findById(id)
-                .orElseThrow(() -> new Exception("해당 유저는 없습니다."));
+                .orElseThrow(() -> new Exception("No Such User Exists"));
     }
 
     // 하나로 합쳐보기

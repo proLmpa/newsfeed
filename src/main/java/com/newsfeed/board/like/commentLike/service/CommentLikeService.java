@@ -28,9 +28,9 @@ public class CommentLikeService {
 
         try {
             if (commentLikeRepository.findByUserEntityAndCommentEntity(user, comment).isPresent()) {  // 이미 좋아요 되어있으면 에러 반환
-                throw new Exception("\"Like\" already exists.");
+                throw new Exception("Like already exists.");
             } else if (comment.getUser().getId().equals(userDetails.getId())) { // 댓글 작성자의 id 와 현재 인가된 유저의 id 를 비교하요 같으면 에러 반환
-                throw new Exception("Same person cannot \"Like\"");
+                throw new Exception("Same person cannot Like");
             } else {
                 comment.countLike(); // comment의 likes가 1 증가
             }
@@ -55,7 +55,7 @@ public class CommentLikeService {
         try {
             // 좋아요가 존재하는지 확인 후 삭제, 존재하지 않으면 에러 반환
             CommentLikeEntity like = commentLikeRepository.findByUserEntityAndCommentEntity(user, comment)
-                    .orElseThrow(() -> new RuntimeException("\"Like\" not exists."));
+                    .orElseThrow(() -> new RuntimeException("Like not exists."));
             comment.discountLike();
             commentLikeRepository.delete(like);
 
