@@ -26,7 +26,7 @@ public class FollowController {
     }
 
     // 언팔로우 메서드
-    @DeleteMapping("/unfollow/{followingId}")
+    @PostMapping("/unfollow/{followingId}")
     public ResponseEntity<ApiResponseDto> unfollowing (@PathVariable String followingId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws Exception {
         return followService.unfollow(followingId, userDetails);
     }
