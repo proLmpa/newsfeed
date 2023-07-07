@@ -10,7 +10,7 @@ import org.springframework.security.core.parameters.P;
 @Setter
 public class UserRequestDto {
     @NotBlank
-    @Pattern(regexp="^[a-zA-Z][a-zA-Z0-9._-]{1,14}$", message="영대소문자와 숫자(0~9) 및 특수문자(._-)로 이뤄진 4자 이상 10자 이하의 값만 입력 가능합니다.")
+    @Pattern(regexp="^[a-zA-Z][a-zA-Z0-9._-]{3,9}$", message="영대소문자와 숫자(0~9) 및 특수문자(._-)로 이뤄진 4자 이상 10자 이하의 값만 입력 가능합니다.")
     private String id;
 
     @NotBlank
