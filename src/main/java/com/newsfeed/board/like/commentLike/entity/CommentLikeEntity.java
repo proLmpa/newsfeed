@@ -6,6 +6,8 @@ import com.newsfeed.board.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -22,6 +24,7 @@ public class CommentLikeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CommentEntity commentEntity;
 
     public CommentLikeEntity (UserEntity user, CommentEntity comment) {
